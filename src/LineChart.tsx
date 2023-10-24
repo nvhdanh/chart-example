@@ -1,4 +1,4 @@
-import { Box, Checkbox, Stack } from '@mui/material'
+import { Box, Checkbox, Stack, Typography } from '@mui/material'
 import { blue, red } from '@mui/material/colors'
 import {
   CategoryScale,
@@ -31,31 +31,50 @@ interface DataPoint {
   y: number
 }
 
-interface DataPoint {
-  x: number
-  y: number
-}
-
 function generateRealisticDataPoints(numPoints: number): DataPoint[] {
   const dataPoints: DataPoint[] = []
-  let previousY = Math.floor(Math.random() * 51) // Start with a random value between 0 and 50
+  let previousY = Math.floor(Math.random() * 51)
 
   for (let i = 0; i < numPoints; i++) {
-    // Generating numeric x and y values
     const x = i
 
-    // Introduce a bit of randomness in the change between consecutive y values
-    const yChange = Math.floor(Math.random() * 11) - 5 // Random change between -5 and 5
-    const newY = Math.max(0, Math.min(100, previousY + yChange)) // Ensure newY is between 0 and 100
+    const yChange = Math.floor(Math.random() * 11) - 5
+    const newY = Math.max(0, Math.min(100, previousY + yChange))
 
-    // Update the previousY for the next iteration
     previousY = newY
 
-    // Push the data point to the array
     dataPoints.push({ x, y: newY })
   }
 
   return dataPoints
+}
+
+const options1: ChartOptions<'line'> = {
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    legend: {
+      position: 'top' as const,
+    },
+    title: {
+      display: true,
+      text: 'Normal Chart',
+    },
+  },
+}
+
+const options2: ChartOptions<'line'> = {
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    legend: {
+      position: 'top' as const,
+    },
+    title: {
+      display: true,
+      text: 'Optimized Chart',
+    },
+  },
 }
 
 type LineChartProps = {
@@ -66,41 +85,12 @@ type LineChartProps = {
 const LineChart = ({ dataLength, tolerance }: LineChartProps) => {
   const [showCharts, setShowCharts] = useState({ chart1: true, chart2: true })
 
-  const options1: ChartOptions<'line'> = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        position: 'top' as const,
-      },
-      title: {
-        display: true,
-        text: 'Normal Chart',
-      },
-    },
-  }
-
-  const options2: ChartOptions<'line'> = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        position: 'top' as const,
-      },
-      title: {
-        display: true,
-        text: 'Optimized Chart',
-      },
-    },
-  }
-
   const values = useMemo(
     () => generateRealisticDataPoints(dataLength),
     [dataLength]
   )
 
   const data1: ChartData<'line', unknown[], string> = useMemo(() => {
-    console.log(1, values.length)
     const labels = values.map((item) => item.x.toString())
     const data = values.map((item) => item.y)
 
@@ -119,7 +109,6 @@ const LineChart = ({ dataLength, tolerance }: LineChartProps) => {
 
   const data2: ChartData<'line', unknown[], string> = useMemo(() => {
     const simplifiedValues = simplify(values, tolerance)
-    console.log(2, simplifiedValues.length)
     const labels = simplifiedValues.map((item) => item.x.toString())
     const data = simplifiedValues.map((item) => item.y)
     return {
@@ -139,24 +128,40 @@ const LineChart = ({ dataLength, tolerance }: LineChartProps) => {
     <Box>
       <Stack direction={'column'} columnGap={6}>
         <Stack direction={'row'} alignItems={'center'}>
-          <Checkbox
-            checked={showCharts.chart1}
-            onChange={(e) => {
-              setShowCharts((state) => ({ ...state, chart1: e.target.checked }))
-            }}
-          />
+          <Stack>
+            <Checkbox
+              checked={showCharts.chart1}
+              onChange={(e) => {
+                setShowCharts((state) => ({
+                  ...state,
+                  chart1: e.target.checked,
+                }))
+              }}
+            />
+            <Typography variant="subtitle2" textAlign={'center'}>
+              Data Points: {values.length}
+            </Typography>
+          </Stack>
+
           <Box height={250} flex={1}>
             {showCharts.chart1 && <Line options={options1} data={data1} />}
           </Box>
         </Stack>
         <Stack direction={'row'} alignItems={'center'}>
-          <Checkbox
-            checked={showCharts.chart2}
-            onChange={(e) => {
-              setShowCharts((state) => ({ ...state, chart2: e.target.checked }))
-            }}
-          />
-
+          <Stack>
+            <Checkbox
+              checked={showCharts.chart2}
+              onChange={(e) => {
+                setShowCharts((state) => ({
+                  ...state,
+                  chart2: e.target.checked,
+                }))
+              }}
+            />
+            <Typography variant="subtitle2" textAlign={'center'}>
+              Data Points: {simplify(values, tolerance).length}
+            </Typography>
+          </Stack>
           <Box height={250} flex={1}>
             {showCharts.chart2 && <Line options={options2} data={data2} />}
           </Box>
