@@ -128,7 +128,7 @@ const LineChart = ({ dataLength, tolerance }: LineChartProps) => {
     <Box>
       <Stack direction={'column'} columnGap={6}>
         <Stack direction={'row'} alignItems={'center'}>
-          <Stack>
+          <Stack alignItems={'center'}>
             <Checkbox
               checked={showCharts.chart1}
               onChange={(e) => {
@@ -148,7 +148,7 @@ const LineChart = ({ dataLength, tolerance }: LineChartProps) => {
           </Box>
         </Stack>
         <Stack direction={'row'} alignItems={'center'}>
-          <Stack>
+          <Stack alignItems={'center'}>
             <Checkbox
               checked={showCharts.chart2}
               onChange={(e) => {
