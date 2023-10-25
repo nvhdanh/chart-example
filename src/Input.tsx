@@ -58,14 +58,14 @@ const Input = ({ setState, state }: InputProps) => {
           size="small"
           value={state.tolerance}
           type="number"
-          inputProps={{ min: 0, step: 0.1 }}
+          inputProps={{ min: 0, step: 0.2 }}
           onChange={(e) => {
             setState((state) => ({ ...state, tolerance: +e.target.value }))
           }}
         />
         <Slider
           value={state.tolerance}
-          step={0.1}
+          step={0.2}
           max={50}
           onChange={(_, newValue) => {
             setState((state) => ({
