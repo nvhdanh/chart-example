@@ -11,14 +11,19 @@ export const determineAppropriateTolerance = (
   originalData: DataPoint[],
   targetSimplifiedPoints: number
 ): number => {
-  if (originalData.length <= targetSimplifiedPoints) return 0.1
+  if (originalData.length <= targetSimplifiedPoints) {
+    return 0.1
+  }
 
   let tolerance = 1
+  let simplifiedData = simplify(originalData, tolerance)
+  let simplifiedLength = simplifiedData.length
 
-  let s = simplify(originalData, tolerance)
-  while (s.length > targetSimplifiedPoints)
-    (tolerance *= s.length > targetSimplifiedPoints ? 1.25 : 0.75),
-      (s = simplify(originalData, tolerance))
+  while (simplifiedLength > targetSimplifiedPoints) {
+    tolerance *= simplifiedLength > targetSimplifiedPoints ? 1.25 : 0.75
+    simplifiedData = simplify(originalData, tolerance)
+    simplifiedLength = simplifiedData.length
+  }
 
   const roundedTolerance = Math.ceil(tolerance * 5) / 5
 

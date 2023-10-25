@@ -56,7 +56,7 @@ const OptimizedChart = memo(({ values, tolerance }: LineChartProps) => {
     <Box>
       <Stack direction={'column'} columnGap={6}>
         <Stack direction={'row'} alignItems={'center'}>
-          <Stack alignItems={'center'}>
+          <Stack alignItems={'center'} width={100}>
             <Checkbox
               checked={showCharts.chart2}
               onChange={(e) => {

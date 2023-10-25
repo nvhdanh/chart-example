@@ -17,7 +17,7 @@ const App = () => {
   )
 
   const tolerance = useMemo(
-    () => determineAppropriateTolerance(values, 600),
+    () => determineAppropriateTolerance(values, 800),
     [values]
   )
 

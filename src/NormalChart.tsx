@@ -53,7 +53,7 @@ const NormalChart = memo(({ values }: LineChartProps) => {
     <Box>
       <Stack direction={'column'} columnGap={6}>
         <Stack direction={'row'} alignItems={'center'}>
-          <Stack alignItems={'center'}>
+          <Stack alignItems={'center'} width={100}>
             <Checkbox
               checked={showCharts.chart1}
               onChange={(e) => {
