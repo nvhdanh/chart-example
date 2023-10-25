@@ -3,10 +3,7 @@ import { useMemo, useState } from 'react'
 import Input from './Input'
 import NormalChart from './NormalChart'
 import OptimizedChart from './OptimizedChart'
-import {
-  determineAppropriateTolerance,
-  generateRealisticDataPoints,
-} from './utils'
+import { generateRealisticDataPoints } from './utils'
 
 const App = () => {
   const [dataLength, setDataLength] = useState(100)
@@ -16,15 +13,10 @@ const App = () => {
     [dataLength]
   )
 
-  const tolerance = useMemo(
-    () => determineAppropriateTolerance(values, { min: 300, max: 800 }),
-    [values]
-  )
-
   return (
     <Box>
       <Input dataLength={dataLength} setDataLength={setDataLength} />
-      <OptimizedChart values={values} tolerance={tolerance} />
+      <OptimizedChart values={values} />
       <NormalChart values={values} />
     </Box>
   )

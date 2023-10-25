@@ -14,7 +14,12 @@ import {
 import { memo, useMemo, useState } from 'react'
 import { Line } from 'react-chartjs-2'
 import simplify from 'simplify-js'
-import { DataPoint, createOptions, generateGradientOnChartArea } from './utils'
+import {
+  DataPoint,
+  createOptions,
+  determineAppropriateTolerance,
+  generateGradientOnChartArea,
+} from './utils'
 
 ChartJS.register(
   CategoryScale,
@@ -28,11 +33,14 @@ ChartJS.register(
 
 type LineChartProps = {
   values: DataPoint[]
-  tolerance: number
 }
 
-const OptimizedChart = memo(({ values, tolerance }: LineChartProps) => {
+const OptimizedChart = memo(({ values }: LineChartProps) => {
   const [showCharts, setShowCharts] = useState({ chart2: true })
+  const tolerance = determineAppropriateTolerance(values, {
+    min: 300,
+    max: 800,
+  })
 
   const data2: ChartData<'line', unknown[], string> = useMemo(() => {
     const simplifiedValues = simplify(values, tolerance)
