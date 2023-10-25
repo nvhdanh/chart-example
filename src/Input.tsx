@@ -1,11 +1,4 @@
-import {
-  MenuItem,
-  Select,
-  Slider,
-  Stack,
-  TextField,
-  Typography,
-} from '@mui/material'
+import { MenuItem, Select, Stack, Typography } from '@mui/material'
 
 const dataPointItems = [
   100,

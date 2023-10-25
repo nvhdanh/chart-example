@@ -1,5 +1,5 @@
 import { Box } from '@mui/material'
-import { useMemo, useState, useEffect } from 'react'
+import { useMemo, useState } from 'react'
 import Input from './Input'
 import NormalChart from './NormalChart'
 import OptimizedChart from './OptimizedChart'
