@@ -9,9 +9,9 @@ export interface DataPoint {
 
 export const determineAppropriateTolerance = (
   originalData: DataPoint[],
-  targetSimplifiedPoints: number
+  targetSimplifiedPoints: { min: number; max: number }
 ): number => {
-  if (originalData.length <= targetSimplifiedPoints) {
+  if (originalData.length <= targetSimplifiedPoints.max) {
     return 0.1
   }
 
@@ -19,8 +19,11 @@ export const determineAppropriateTolerance = (
   let simplifiedData = simplify(originalData, tolerance)
   let simplifiedLength = simplifiedData.length
 
-  while (simplifiedLength > targetSimplifiedPoints) {
-    tolerance *= simplifiedLength > targetSimplifiedPoints ? 1.25 : 0.75
+  while (
+    simplifiedLength > targetSimplifiedPoints.max ||
+    simplifiedLength < targetSimplifiedPoints.min
+  ) {
+    tolerance *= simplifiedLength > targetSimplifiedPoints.max ? 1.25 : 0.75
     simplifiedData = simplify(originalData, tolerance)
     simplifiedLength = simplifiedData.length
   }

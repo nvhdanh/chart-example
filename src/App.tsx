@@ -9,26 +9,22 @@ import {
 } from './utils'
 
 const App = () => {
-  const [state, setState] = useState({ dataLength: 100, tolerance: 1 })
+  const [dataLength, setDataLength] = useState(100)
 
   const values = useMemo(
-    () => generateRealisticDataPoints(state.dataLength),
-    [state.dataLength]
+    () => generateRealisticDataPoints(dataLength),
+    [dataLength]
   )
 
   const tolerance = useMemo(
-    () => determineAppropriateTolerance(values, 800),
+    () => determineAppropriateTolerance(values, { min: 300, max: 800 }),
     [values]
   )
 
-  useEffect(() => {
-    setState((state) => ({ ...state, tolerance }))
-  }, [tolerance])
-
   return (
     <Box>
-      <Input state={state} setState={setState} />
-      <OptimizedChart values={values} tolerance={state.tolerance} />
+      <Input dataLength={dataLength} setDataLength={setDataLength} />
+      <OptimizedChart values={values} tolerance={tolerance} />
       <NormalChart values={values} />
     </Box>
   )
