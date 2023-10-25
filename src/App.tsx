@@ -1,10 +1,12 @@
 import { Box } from '@mui/material'
-import { useState } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import Input from './Input'
 import NormalChart from './NormalChart'
 import OptimizedChart from './OptimizedChart'
-import { generateRealisticDataPoints } from './utils'
-import { useMemo } from 'react'
+import {
+  determineAppropriateTolerance,
+  generateRealisticDataPoints,
+} from './utils'
 
 const App = () => {
   const [state, setState] = useState({ dataLength: 100, tolerance: 1 })
@@ -13,6 +15,15 @@ const App = () => {
     () => generateRealisticDataPoints(state.dataLength),
     [state.dataLength]
   )
+
+  const tolerance = useMemo(
+    () => determineAppropriateTolerance(values, 600),
+    [values]
+  )
+
+  useEffect(() => {
+    setState((state) => ({ ...state, tolerance }))
+  }, [tolerance])
 
   return (
     <Box>

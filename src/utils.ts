@@ -1,9 +1,28 @@
 import { blue, green, red } from '@mui/material/colors'
 import { ChartOptions, ScriptableContext } from 'chart.js'
+import simplify from 'simplify-js'
 
 export interface DataPoint {
   x: number
   y: number
+}
+
+export const determineAppropriateTolerance = (
+  originalData: DataPoint[],
+  targetSimplifiedPoints: number
+): number => {
+  if (originalData.length <= targetSimplifiedPoints) return 0.1
+
+  let tolerance = 1
+
+  let s = simplify(originalData, tolerance)
+  while (s.length > targetSimplifiedPoints)
+    (tolerance *= s.length > targetSimplifiedPoints ? 1.25 : 0.75),
+      (s = simplify(originalData, tolerance))
+
+  const roundedTolerance = Math.ceil(tolerance * 5) / 5
+
+  return roundedTolerance
 }
 
 export const generateRealisticDataPoints = (numPoints: number): DataPoint[] => {
