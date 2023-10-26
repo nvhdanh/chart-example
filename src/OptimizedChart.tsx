@@ -13,12 +13,11 @@ import {
 } from 'chart.js'
 import { memo, useMemo, useState } from 'react'
 import { Line } from 'react-chartjs-2'
-import simplify from 'simplify-js'
 import {
-  DataPoint,
+  Point,
   createOptions,
-  determineAppropriateTolerance,
   generateGradientOnChartArea,
+  simplifiedChartData,
 } from './utils'
 
 ChartJS.register(
@@ -32,18 +31,17 @@ ChartJS.register(
 )
 
 type LineChartProps = {
-  values: DataPoint[]
+  values: Point[]
 }
 
 const OptimizedChart = memo(({ values }: LineChartProps) => {
   const [showCharts, setShowCharts] = useState({ chart2: true })
-  const tolerance = determineAppropriateTolerance(values, {
-    min: 300,
-    max: 800,
+  const simplifiedValues = simplifiedChartData(values, {
+    minPoints: 400,
+    maxPoints: 800,
   })
 
   const data2: ChartData<'line', unknown[], string> = useMemo(() => {
-    const simplifiedValues = simplify(values, tolerance)
     const labels = simplifiedValues.map((item) => item.x.toString())
     const data = simplifiedValues.map((item) => item.y)
     return {
@@ -58,7 +56,7 @@ const OptimizedChart = memo(({ values }: LineChartProps) => {
         },
       ],
     }
-  }, [values, tolerance])
+  }, [simplifiedValues])
 
   return (
     <Box>
@@ -75,7 +73,7 @@ const OptimizedChart = memo(({ values }: LineChartProps) => {
               }}
             />
             <Typography variant="subtitle2" textAlign={'center'}>
-              Data Points: {simplify(values, tolerance).length}
+              Data Points: {simplifiedValues.length}
             </Typography>
           </Stack>
           <Box height={250} flex={1}>

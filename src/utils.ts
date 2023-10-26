@@ -2,39 +2,60 @@ import { blue, green, red } from '@mui/material/colors'
 import { ChartOptions, ScriptableContext } from 'chart.js'
 import simplify from 'simplify-js'
 
-export interface DataPoint {
+export interface Point {
   x: number
   y: number
 }
 
-export const determineAppropriateTolerance = (
-  originalData: DataPoint[],
-  targetSimplifiedPoints: { min: number; max: number }
-): number => {
-  if (originalData.length <= targetSimplifiedPoints.max) {
-    return 0.1
-  }
-
-  let tolerance = 1
-  let simplifiedData = simplify(originalData, tolerance)
-  let simplifiedLength = simplifiedData.length
-
-  while (
-    simplifiedLength > targetSimplifiedPoints.max ||
-    simplifiedLength < targetSimplifiedPoints.min
-  ) {
-    tolerance *= simplifiedLength > targetSimplifiedPoints.max ? 1.25 : 0.75
-    simplifiedData = simplify(originalData, tolerance)
-    simplifiedLength = simplifiedData.length
-  }
-
-  const roundedTolerance = Math.ceil(tolerance * 5) / 5
-
-  return roundedTolerance
+export const calculateTolerance = (x: number) => {
+  const a = -1e-10
+  const b = 0.0002
+  const c = 7.9299
+  return a * x ** 2 + b * x + c
 }
 
-export const generateRealisticDataPoints = (numPoints: number): DataPoint[] => {
-  const dataPoints: DataPoint[] = []
+export const simplifiedChartData = (
+  originalData: Point[],
+  targetSimplifiedPoints: { minPoints: number; maxPoints: number }
+) => {
+  if (originalData.length <= targetSimplifiedPoints.maxPoints)
+    return originalData
+
+  const maxCount = 30
+  let count = 0
+  let tolerance = Math.abs(calculateTolerance(originalData.length))
+  let simplifiedData = simplify(originalData, tolerance)
+  let simplifiedLength = simplifiedData.length
+  // console.log(1, { count, length: originalData.length, tolerance })
+
+  while (
+    simplifiedLength > targetSimplifiedPoints.maxPoints ||
+    simplifiedLength < targetSimplifiedPoints.minPoints
+  ) {
+    count++
+    const toleranceAdjustmentBase = 0.1
+    const toleranceAdjustmentByCount =
+      (count / maxCount) * 0.99 * toleranceAdjustmentBase
+
+    const toleranceAdjustment =
+      toleranceAdjustmentBase - toleranceAdjustmentByCount
+    tolerance *=
+      simplifiedLength > targetSimplifiedPoints.maxPoints
+        ? 1 + toleranceAdjustment
+        : 1 - toleranceAdjustment
+
+    simplifiedData = simplify(originalData, tolerance)
+    simplifiedLength = simplifiedData.length
+
+    if (count >= maxCount) break
+  }
+  // console.log(2, { count, length: originalData.length, tolerance })
+
+  return simplifiedData
+}
+
+export const generateRealisticDataPoints = (numPoints: number): Point[] => {
+  const dataPoints: Point[] = []
   let previousY = Math.floor(Math.random() * 51)
 
   for (let i = 0; i < numPoints; i++) {
@@ -58,6 +79,7 @@ export const createOptions = ({
 }): ChartOptions<'line'> => {
   return {
     elements: { point: { radius: 2 } },
+    animation: { duration: 0 },
     responsive: true,
     maintainAspectRatio: false,
     scales: {

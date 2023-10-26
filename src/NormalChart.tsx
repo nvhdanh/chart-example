@@ -30,7 +30,7 @@ type LineChartProps = {
 }
 
 const NormalChart = memo(({ values }: LineChartProps) => {
-  const [showCharts, setShowCharts] = useState({ chart1: true })
+  const [showCharts, setShowCharts] = useState({ chart1: false })
 
   const data1: ChartData<'line', unknown[], string> = useMemo(() => {
     const labels = values.map((item) => item.x.toString())
