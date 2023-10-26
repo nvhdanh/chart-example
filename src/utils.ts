@@ -16,7 +16,8 @@ export const calculateInitialTolerance = (x: number) => {
 
 export const simplifiedChartData = (
   originalData: Point[],
-  targetSimplifiedPoints: { minPoints: number; maxPoints: number }
+  targetSimplifiedPoints: { minPoints: number; maxPoints: number },
+  chartRange: { min: number; max: number }
 ) => {
   if (originalData.length <= targetSimplifiedPoints.maxPoints) {
     return originalData
@@ -24,10 +25,12 @@ export const simplifiedChartData = (
 
   const maxCount = 50
   let count = 0
+
   let tolerance =
     originalData.length > 500 * 1000
-      ? 50
+      ? ((chartRange.max + chartRange.min) / 2) * 0.7
       : Math.abs(calculateInitialTolerance(originalData.length))
+
   let simplifiedData = simplify(originalData, tolerance)
   let simplifiedLength = simplifiedData.length
 
@@ -35,8 +38,6 @@ export const simplifiedChartData = (
     simplifiedLength > targetSimplifiedPoints.maxPoints ||
     simplifiedLength < targetSimplifiedPoints.minPoints
   ) {
-    count++
-
     const toleranceAdjustmentBase = 0.1
 
     const toleranceAdjustmentByDataLength =
@@ -61,6 +62,8 @@ export const simplifiedChartData = (
     simplifiedLength = simplifiedData.length
 
     if (count >= maxCount) break
+
+    count++
   }
 
   return simplifiedData
