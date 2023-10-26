@@ -7,7 +7,7 @@ export interface Point {
   y: number
 }
 
-export const calculateTolerance = (x: number) => {
+export const calculateInitialTolerance = (x: number) => {
   const a = -1e-10
   const b = 0.0002
   const c = 7.9299
@@ -18,27 +18,40 @@ export const simplifiedChartData = (
   originalData: Point[],
   targetSimplifiedPoints: { minPoints: number; maxPoints: number }
 ) => {
-  if (originalData.length <= targetSimplifiedPoints.maxPoints)
+  if (originalData.length <= targetSimplifiedPoints.maxPoints) {
     return originalData
+  }
 
-  const maxCount = 30
+  const maxCount = 50
   let count = 0
-  let tolerance = Math.abs(calculateTolerance(originalData.length))
+  let tolerance =
+    originalData.length > 500 * 1000
+      ? 50
+      : Math.abs(calculateInitialTolerance(originalData.length))
   let simplifiedData = simplify(originalData, tolerance)
   let simplifiedLength = simplifiedData.length
-  // console.log(1, { count, length: originalData.length, tolerance })
 
   while (
     simplifiedLength > targetSimplifiedPoints.maxPoints ||
     simplifiedLength < targetSimplifiedPoints.minPoints
   ) {
     count++
+
     const toleranceAdjustmentBase = 0.1
+
+    const toleranceAdjustmentByDataLength =
+      Math.min(targetSimplifiedPoints.maxPoints / simplifiedLength, 1) *
+      0.995 *
+      toleranceAdjustmentBase
+
     const toleranceAdjustmentByCount =
-      (count / maxCount) * 0.99 * toleranceAdjustmentBase
+      (count / maxCount) * 0.995 * toleranceAdjustmentBase
 
     const toleranceAdjustment =
-      toleranceAdjustmentBase - toleranceAdjustmentByCount
+      toleranceAdjustmentBase -
+      toleranceAdjustmentByCount * 0.5 +
+      toleranceAdjustmentByDataLength * 0.5
+
     tolerance *=
       simplifiedLength > targetSimplifiedPoints.maxPoints
         ? 1 + toleranceAdjustment
@@ -49,7 +62,6 @@ export const simplifiedChartData = (
 
     if (count >= maxCount) break
   }
-  // console.log(2, { count, length: originalData.length, tolerance })
 
   return simplifiedData
 }
