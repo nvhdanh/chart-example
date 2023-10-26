@@ -76,7 +76,7 @@ const OptimizedChart = memo(({ values }: LineChartProps) => {
               Data Points: {simplifiedValues.length}
             </Typography>
           </Stack>
-          <Box height={250} flex={1}>
+          <Box height={400} flex={1}>
             {showCharts.chart2 && (
               <Line
                 options={createOptions({ title: 'Optimized Chart' })}

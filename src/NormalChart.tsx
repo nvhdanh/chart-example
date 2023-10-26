@@ -68,7 +68,7 @@ const NormalChart = memo(({ values }: LineChartProps) => {
             </Typography>
           </Stack>
 
-          <Box height={250} flex={1}>
+          <Box height={400} flex={1}>
             {showCharts.chart1 && (
               <Line
                 options={createOptions({ title: 'Normal Chart' })}
