@@ -13,7 +13,7 @@ import {
 } from 'chart.js'
 import { memo, useMemo, useState } from 'react'
 import { Line } from 'react-chartjs-2'
-import { DataPoint, createOptions } from './utils'
+import { Point, createOptions } from './utils'
 
 ChartJS.register(
   CategoryScale,
@@ -26,7 +26,7 @@ ChartJS.register(
 )
 
 type LineChartProps = {
-  values: DataPoint[]
+  values: Point[]
 }
 
 const NormalChart = memo(({ values }: LineChartProps) => {
