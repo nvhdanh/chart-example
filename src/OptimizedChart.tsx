@@ -13,12 +13,8 @@ import {
 } from 'chart.js'
 import { memo, useMemo, useState } from 'react'
 import { Line } from 'react-chartjs-2'
-import {
-  Point,
-  createOptions,
-  generateGradientOnChartArea,
-  simplifiedChartData,
-} from './utils'
+import { simplifiedChartData } from './algorithm'
+import { Point, createOptions, generateGradientOnChartArea } from './utils'
 
 ChartJS.register(
   CategoryScale,
