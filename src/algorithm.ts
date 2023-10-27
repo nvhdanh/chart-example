@@ -35,10 +35,12 @@ export const simplifiedChartData = (
   const maxCount = 50
   let count = 0
 
-  let tolerance = Math.abs(calculateInitialTolerance(originalData.length))
+  let tolerance = Math.min(
+    Math.abs(calculateInitialTolerance(originalData.length)),
+    60
+  )
 
   let simplifiedData = simplify(originalData, tolerance)
-  console.log(tolerance)
 
   while (
     simplifiedData.length > targetSimplifiedPoints.maxPoints ||
@@ -59,17 +61,6 @@ export const simplifiedChartData = (
     simplifiedData = simplify(originalData, tolerance)
 
     if (++count >= maxCount) break
-
-    console.log(
-      count,
-      toleranceAdjustment.toFixed(4),
-      (simplifiedData.length > targetSimplifiedPoints.maxPoints
-        ? 1 + toleranceAdjustment
-        : 1 - toleranceAdjustment
-      ).toFixed(4),
-      tolerance.toFixed(4),
-      simplifiedData.length
-    )
   }
 
   return simplifiedData

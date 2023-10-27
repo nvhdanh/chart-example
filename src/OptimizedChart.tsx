@@ -33,7 +33,7 @@ type LineChartProps = {
 const OptimizedChart = memo(({ values }: LineChartProps) => {
   const [showCharts, setShowCharts] = useState({ chart2: true })
   const simplifiedValues = simplifiedChartData(values, {
-    minPoints: 500,
+    minPoints: 600,
     maxPoints: 800,
   })
 
