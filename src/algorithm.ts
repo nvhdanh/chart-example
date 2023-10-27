@@ -4,7 +4,7 @@ import { Point } from './utils'
 const calculateInitialTolerance = (x: number) => {
   const a = -1e-10
   const b = 0.0002
-  const c = 7.9299
+  const c = 0.9
   return a * x ** 2 + b * x + c
 }
 
@@ -21,13 +21,12 @@ const calculateToleranceAdjustment = (
     base
   const adjustmentByCount = (count / maxCount) * 0.995 * base
 
-  return base - adjustmentByDataLength * 0.5 + adjustmentByCount * 0.5
+  return base - (adjustmentByDataLength * 50 + adjustmentByCount * 50) / 100
 }
 
 export const simplifiedChartData = (
   originalData: Point[],
-  targetSimplifiedPoints: { minPoints: number; maxPoints: number },
-  chartRange: { min: number; max: number }
+  targetSimplifiedPoints: { minPoints: number; maxPoints: number }
 ) => {
   if (originalData.length <= targetSimplifiedPoints.maxPoints) {
     return originalData
@@ -36,12 +35,10 @@ export const simplifiedChartData = (
   const maxCount = 50
   let count = 0
 
-  let tolerance =
-    originalData.length > 500 * 1000
-      ? (chartRange.max + chartRange.min) / 3
-      : Math.abs(calculateInitialTolerance(originalData.length))
+  let tolerance = Math.abs(calculateInitialTolerance(originalData.length))
 
   let simplifiedData = simplify(originalData, tolerance)
+  console.log(tolerance)
 
   while (
     simplifiedData.length > targetSimplifiedPoints.maxPoints ||
@@ -62,6 +59,17 @@ export const simplifiedChartData = (
     simplifiedData = simplify(originalData, tolerance)
 
     if (++count >= maxCount) break
+
+    console.log(
+      count,
+      toleranceAdjustment.toFixed(4),
+      (simplifiedData.length > targetSimplifiedPoints.maxPoints
+        ? 1 + toleranceAdjustment
+        : 1 - toleranceAdjustment
+      ).toFixed(4),
+      tolerance.toFixed(4),
+      simplifiedData.length
+    )
   }
 
   return simplifiedData

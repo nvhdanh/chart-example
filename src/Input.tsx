@@ -13,8 +13,6 @@ const dataPointItems = [
   100 * 1000,
   300 * 1000,
   600 * 1000,
-  1 * 1000 * 1000,
-  2 * 1000 * 1000,
 ]
 
 type InputProps = {

@@ -32,14 +32,10 @@ type LineChartProps = {
 
 const OptimizedChart = memo(({ values }: LineChartProps) => {
   const [showCharts, setShowCharts] = useState({ chart2: true })
-  const simplifiedValues = simplifiedChartData(
-    values,
-    {
-      minPoints: 500,
-      maxPoints: 800,
-    },
-    { min: 0, max: 100 }
-  )
+  const simplifiedValues = simplifiedChartData(values, {
+    minPoints: 500,
+    maxPoints: 800,
+  })
 
   const data2: ChartData<'line', unknown[], string> = useMemo(() => {
     const labels = simplifiedValues.map((item) => item.x.toString())
@@ -76,7 +72,7 @@ const OptimizedChart = memo(({ values }: LineChartProps) => {
               Data Points: {simplifiedValues.length}
             </Typography>
           </Stack>
-          <Box height={400} flex={1}>
+          <Box height={330} flex={1}>
             {showCharts.chart2 && (
               <Line
                 options={createOptions({ title: 'Optimized Chart' })}
