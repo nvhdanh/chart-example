@@ -32,13 +32,10 @@ export const simplifiedChartData = (
     return originalData
   }
 
-  const maxCount = 50
+  const maxCount = 40
   let count = 0
 
-  let tolerance = Math.min(
-    Math.abs(calculateInitialTolerance(originalData.length)),
-    60
-  )
+  let tolerance = Math.abs(calculateInitialTolerance(originalData.length))
 
   let simplifiedData = simplify(originalData, tolerance)
 
