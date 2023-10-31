@@ -5,7 +5,7 @@ const INITIAL_TOLERANCE_COEFF_A = -1e-10
 const INITIAL_TOLERANCE_COEFF_B = 0.0002
 const INITIAL_TOLERANCE_COEFF_C = 0.9
 const BASE_TOLERANCE = 0.1
-const ADJUSTMENT_RATE = 0.995
+const ADJUSTMENT_RATE = 0.99
 const MAX_ITERATIONS = 40
 
 const calculateInitialTolerance = (x: number): number =>
