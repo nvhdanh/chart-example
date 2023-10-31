@@ -1,42 +1,50 @@
 import simplify from 'simplify-js'
 import { Point } from './utils'
 
-const calculateInitialTolerance = (x: number) => {
-  const a = -1e-10
-  const b = 0.0002
-  const c = 0.9
-  return Math.abs(a * x ** 2 + b * x + c)
-}
+const INITIAL_TOLERANCE_COEFF_A = -1e-10
+const INITIAL_TOLERANCE_COEFF_B = 0.0002
+const INITIAL_TOLERANCE_COEFF_C = 0.9
+const BASE_TOLERANCE = 0.1
+const ADJUSTMENT_RATE = 0.995
+const MAX_ITERATIONS = 40
+
+const calculateInitialTolerance = (x: number): number =>
+  Math.abs(
+    INITIAL_TOLERANCE_COEFF_A * x ** 2 +
+      INITIAL_TOLERANCE_COEFF_B * x +
+      INITIAL_TOLERANCE_COEFF_C
+  )
 
 const calculateToleranceAdjustment = (
   targetSimplifiedPoints: { minPoints: number; maxPoints: number },
   simplifiedLength: number,
   count: number,
   maxCount: number
-) => {
-  const base = 0.1
+): number => {
   const adjustmentByDataLength =
     Math.min(targetSimplifiedPoints.maxPoints / simplifiedLength, 1) *
-    0.995 *
-    base
-  const adjustmentByCount = (count / maxCount) * 0.995 * base
+    ADJUSTMENT_RATE *
+    BASE_TOLERANCE
 
-  return base - (adjustmentByDataLength * 50 + adjustmentByCount * 50) / 100
+  const adjustmentByCount =
+    (count / maxCount) * ADJUSTMENT_RATE * BASE_TOLERANCE
+
+  return (
+    BASE_TOLERANCE -
+    (adjustmentByDataLength * 50 + adjustmentByCount * 50) / 100
+  )
 }
 
 export const simplifiedChartData = (
   originalData: Point[],
   targetSimplifiedPoints: { minPoints: number; maxPoints: number }
-) => {
+): Point[] => {
   if (originalData.length <= targetSimplifiedPoints.maxPoints) {
     return originalData
   }
 
-  const maxCount = 40
   let count = 0
-
   let tolerance = calculateInitialTolerance(originalData.length)
-
   let simplifiedData = simplify(originalData, tolerance)
 
   while (
@@ -47,7 +55,7 @@ export const simplifiedChartData = (
       targetSimplifiedPoints,
       simplifiedData.length,
       count,
-      maxCount
+      MAX_ITERATIONS
     )
 
     tolerance *=
@@ -57,7 +65,7 @@ export const simplifiedChartData = (
 
     simplifiedData = simplify(originalData, tolerance)
 
-    if (++count >= maxCount) break
+    if (++count >= MAX_ITERATIONS) break
   }
 
   return simplifiedData
