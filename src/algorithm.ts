@@ -5,7 +5,7 @@ const calculateInitialTolerance = (x: number) => {
   const a = -1e-10
   const b = 0.0002
   const c = 0.9
-  return a * x ** 2 + b * x + c
+  return Math.abs(a * x ** 2 + b * x + c)
 }
 
 const calculateToleranceAdjustment = (
@@ -35,7 +35,7 @@ export const simplifiedChartData = (
   const maxCount = 40
   let count = 0
 
-  let tolerance = Math.abs(calculateInitialTolerance(originalData.length))
+  let tolerance = calculateInitialTolerance(originalData.length)
 
   let simplifiedData = simplify(originalData, tolerance)
 
